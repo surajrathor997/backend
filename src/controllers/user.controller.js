@@ -3,8 +3,12 @@ import { ApiError } from "../utils/ApiError.js";
 import {User} from "../models/user.model.js"
 import { uploadOnCloudinary} from "../utils/cloudinary.js"
 import { ApiResponse } from "../utils/Apiresponse.js";
+import fs from "fs"
+import path from "path"
 
 
+
+import { upload } from '../middlewares/multer.middleware.js';
 
 
 
@@ -41,7 +45,7 @@ const registerUser = asyncHandler(async (req,res) =>{
         throw new ApiError(400,"All fields are required")
     }
     // 3 check if user already exits :  username , email
-   const exitedUser = User.findOne({
+   const exitedUser = await User.findOne({
         $or:[{username },{email}]
 
     })
@@ -54,15 +58,14 @@ const registerUser = asyncHandler(async (req,res) =>{
     const coverImageLocalPath = req.files?.coverImage[0]?.path;
 
     if(!avatarLocalPath){
-        throw new ApiError(400,"Avatar file is required")
+        throw new ApiError(400," 12 Avatar file is required")
     }
 
-   const avatar =  await uploadOnCloudinary(avatarLocalPath)
+   const avatar = await uploadOnCloudinary(avatarLocalPath)
    const  coverImage = await uploadOnCloudinary(coverImageLocalPath)
 
    if(!avatar){
-     throw new ApiError(400,"Avatar file is required")
-
+     throw new ApiError(400," 21  Avatar file is required")
    }
 
   const user = await User.create({
